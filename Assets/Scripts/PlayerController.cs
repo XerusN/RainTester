@@ -8,7 +8,8 @@ public class PlayerController : MonoBehaviour
     private float xLimit = 102f;
 
     public Camera mainCamera;
-    private Vector3 cameraOffset = new Vector3(-10, 5, 0);
+    //private Vector3 cameraOffset = new Vector3(-10, 5, 0);
+    private Vector3 cameraOffset = new Vector3(-2, 5, -10);
 
     private GameManager gameManagerScript;
     
@@ -34,8 +35,8 @@ public class PlayerController : MonoBehaviour
         } else if (this.transform.position.x > xLimit)
         {
             gameManagerScript.EndGame();
-            mainCamera.transform.position = 2 * cameraOffset.x * Vector3.right;
-            mainCamera.transform.Rotate(180 * Vector3.up);
+            mainCamera.transform.Rotate(90 * Vector3.down);
+            Destroy(this.gameObject);
         }
     }
 }
