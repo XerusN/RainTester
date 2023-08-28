@@ -21,24 +21,34 @@ public class SpawnManager : MonoBehaviour
     private float ySpawnPos;
     private Vector3 spawnPos;
 
+    private GameManager gameManagerScript;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        if (gameManagerScript == null)
+        {
+            Debug.LogError("Cannot Find Game Manager Script");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        for (int i = 0; i < dripNbPerFrame; i++)
+        if (gameManagerScript.gameIsActive)
         {
-            xSpawnPos = Random.Range(xLowLimit, xUpLimit);
-            zSpawnPos = Random.Range(zLowLimit, zUpLimit);
-            ySpawnPos = Random.Range(yLowLimit, yUpLimit);
+            for (int i = 0; i < dripNbPerFrame; i++)
+            {
+                xSpawnPos = Random.Range(xLowLimit, xUpLimit);
+                zSpawnPos = Random.Range(zLowLimit, zUpLimit);
+                ySpawnPos = Random.Range(yLowLimit, yUpLimit);
 
-            spawnPos = new Vector3(xSpawnPos, ySpawnPos, zSpawnPos);
-            Instantiate(dripPrefab, spawnPos, dripPrefab.transform.rotation);
+                spawnPos = new Vector3(xSpawnPos, ySpawnPos, zSpawnPos);
+                Instantiate(dripPrefab, spawnPos, dripPrefab.transform.rotation);
+            }
         }
+        
     }
         
 }
