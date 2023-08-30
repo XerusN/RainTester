@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -22,27 +24,64 @@ public class SpawnManager : MonoBehaviour
     private Vector3 spawnPos;
 
     private GameManager gameManagerScript;
+    private DataModeManager dataModeManager;
+
+    private Boolean dataMode = false;
+    private Boolean isSpawning = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
-        if (gameManagerScript == null)
+        if (SceneManager.GetActiveScene().name == "MainScene")
         {
-            Debug.LogError("Cannot Find Game Manager Script");
+            this.dataMode = false;
+            gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+            if (gameManagerScript == null)
+            {
+                Debug.LogError("Cannot Find Game Manager Script");
+            }
         }
+        else
+        {
+            this.dataMode = true;
+            dataModeManager = GameObject.FindWithTag("GameController").GetComponent<DataModeManager>();
+            if (dataModeManager == null)
+            {
+                Debug.LogError("Cannot Find Game Manager Script");
+            }
+        }
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gameManagerScript.gameIsActive)
+        if (!dataMode)
+        {
+            if (gameManagerScript.gameIsActive)
+            {
+                isSpawning = true;
+            }
+            else
+            {
+                isSpawning = false;
+            }
+        } else if (dataModeManager.testActive)
+        {
+            isSpawning = true;
+        }
+        else
+        {
+            isSpawning = false;
+        }
+
+        if (isSpawning)
         {
             for (int i = 0; i < dripNbPerFrame; i++)
             {
-                xSpawnPos = Random.Range(xLowLimit, xUpLimit);
-                zSpawnPos = Random.Range(zLowLimit, zUpLimit);
-                ySpawnPos = Random.Range(yLowLimit, yUpLimit);
+                xSpawnPos = UnityEngine.Random.Range(xLowLimit, xUpLimit);
+                zSpawnPos = UnityEngine.Random.Range(zLowLimit, zUpLimit);
+                ySpawnPos = UnityEngine.Random.Range(yLowLimit, yUpLimit);
 
                 spawnPos = new Vector3(xSpawnPos, ySpawnPos, zSpawnPos);
                 Instantiate(dripPrefab, spawnPos, dripPrefab.transform.rotation);

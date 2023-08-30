@@ -1,40 +1,66 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
 
     private float xLimit = 102f;
+    public float playerSpeed = 1.4f;
 
     public Camera mainCamera;
     //private Vector3 cameraOffset = new Vector3(-10, 5, 0);
     private Vector3 cameraOffset = new Vector3(-2, 5, -10);
 
     private GameManager gameManagerScript;
-    
+    private DataModeManager dataModeManager;
+
+    private Boolean dataMode = false;
 
     // Start is called before the first frame update
     void Start()
     {
         mainCamera = Camera.main;
-        gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
-        if (gameManagerScript == null)
+
+        if (SceneManager.GetActiveScene().name == "MainScene")
         {
-            Debug.LogError("Cannot Find Game Manager Script");
+            this.dataMode = false;
+            gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+            if (gameManagerScript == null)
+            {
+                Debug.LogError("Cannot Find Game Manager Script");
+            }
+        }
+        else
+        {
+            this.dataMode = true;
+            dataModeManager = GameObject.FindWithTag("GameController").GetComponent<DataModeManager>();
+            if (dataModeManager == null)
+            {
+                Debug.LogError("Cannot Find Game Manager Script");
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (this.transform.position.x < xLimit && gameManagerScript.gameIsActive)
+        if (this.transform.position.x < xLimit)
         {
-            this.transform.Translate(Time.deltaTime * gameManagerScript.playerSpeed * Vector3.right);
+            this.transform.Translate(Time.deltaTime * playerSpeed * Vector3.right);
             mainCamera.transform.position = this.transform.position + cameraOffset;
         } else if (this.transform.position.x > xLimit)
         {
-            gameManagerScript.EndGame();
+            if (!dataMode)
+            {
+                gameManagerScript.EndGame();
+            }
+            else
+            {
+                //send info to dataModeManager
+            }
             mainCamera.transform.Rotate(90 * Vector3.down);
             Destroy(this.gameObject);
         }

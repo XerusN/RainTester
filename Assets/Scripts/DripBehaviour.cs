@@ -1,20 +1,38 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DripBehaviour : MonoBehaviour
 {
 
     private float dripSpeed = 5.0f;
     private GameManager gameManagerScript;
+    private DataModeManager dataModeManager;
+
+    private Boolean dataMode = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
-        if (gameManagerScript == null)
+        if (SceneManager.GetActiveScene().name == "MainScene")
         {
-            Debug.LogError("Cannot Find Game Manager Script");
+            this.dataMode = false;
+            gameManagerScript = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+            if (gameManagerScript == null)
+            {
+                Debug.LogError("Cannot Find Game Manager Script");
+            }
+        }
+        else
+        {
+            this.dataMode = true;
+            dataModeManager = GameObject.FindWithTag("GameController").GetComponent<DataModeManager>();
+            if (dataModeManager == null)
+            {
+                Debug.LogError("Cannot Find Game Manager Script");
+            }
         }
     }
 
@@ -29,7 +47,14 @@ public class DripBehaviour : MonoBehaviour
         Destroy(this.gameObject);
         if (other.gameObject.CompareTag("Player"))
         {
-            gameManagerScript.dripOnPlayer += 1;
+            if (!dataMode)
+            {
+                gameManagerScript.dripOnPlayer += 1;
+            }
+            else
+            {
+                //gameManagerScript.dripOnPlayer += 1;
+            }
         }
     }
 }
